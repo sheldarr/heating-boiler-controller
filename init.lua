@@ -9,7 +9,7 @@ dofile('buzzer.lua');
 dofile('sensor.lua');
 dofile('engine.lua');
 
-engine.start(5000);
+engine.start(1000);
 
 buzzer.beep();
 

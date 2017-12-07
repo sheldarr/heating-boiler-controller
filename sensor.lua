@@ -4,10 +4,10 @@ ds18b20.setup(DS18B20_PIN)
 
 sensor = {}
 
-sensor.read = function(interval)
+sensor.read = function(callback)
     ds18b20.read(
         function(index, rom, resolution, temperature)
-            return temperature
+            callback(temperature)
         end,
         {}
     )
