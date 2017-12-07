@@ -1,18 +1,34 @@
 engine = {}
 
+fallingTime = 0
+previousTemperature = 0
+
 thresholds = {
-    setpoint = 24.00
+    setpoint = 30.00
 }
 
 function printTemperature(temperature)
     print(temperature)
 
-    if temperature < thresholds.setpoint
-    then
-        print('TURN ON')
+    if temperature <= previousTemperature then
+        print("Temperature falling down")
+        fallingTime = fallingTime + 1
+        print(fallingTime)
     else
-        print('TURN OFF')
+        print("Temperature rising up")
+        fallingTime = 0
+        print(fallingTime)
     end
+
+    if fallingTime > 10 then
+        fan.off()
+    elseif temperature < thresholds.setpoint then
+        fan.on()
+    else
+        fan.off()
+    end
+
+    previousTemperature = temperature
 end
 
 function loop()

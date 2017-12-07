@@ -6,6 +6,7 @@ gpio.mode(BUZZER_PIN, gpio.OUTPUT)
 ds18b20.setup(DS18B20_PIN)
 
 dofile('buzzer.lua');
+dofile('fan.lua');
 dofile('sensor.lua');
 dofile('engine.lua');
 
