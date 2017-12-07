@@ -1,6 +1,8 @@
 BUZZER_PIN = 6
 BUZZER_LENGTH = 500000
 
+gpio.mode(BUZZER_PIN, gpio.OUTPUT)
+
 buzzer = {}
 
 buzzer.beep = function(length)
