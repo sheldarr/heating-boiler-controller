@@ -5,9 +5,13 @@ BUZZER_LENGTH = 500000
 gpio.mode(BUZZER_PIN, gpio.OUTPUT)
 ds18b20.setup(DS18B20_PIN)
 
-function beep()
-    gpio.serout(BUZZER_PIN, gpio.LOW, {BUZZER_LENGTH, BUZZER_LENGTH})
-end
+dofile('buzzer.lua');
+dofile('sensor.lua');
+dofile('engine.lua');
+
+engine.start(5000);
+
+buzzer.beep();
 
 wifi.setmode(wifi.STATION)
 
