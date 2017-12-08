@@ -1,38 +1,40 @@
 engine = {}
 
+hysteresis = 2
 fallingTime = 0
 previousTemperature = 0
 
 thresholds = {
-    setpoint = 30.00
+    setpoint = 30.00,
+    falling = 3600
 }
 
-function printTemperature(temperature)
-    print(temperature)
-
-    if temperature <= previousTemperature then
-        print("Temperature falling down")
-        fallingTime = fallingTime + 1
-        print(fallingTime)
-    else
-        print("Temperature rising up")
-        fallingTime = 0
-        print(fallingTime)
-    end
-
-    if fallingTime > 10 then
-        fan.off()
-    elseif temperature < thresholds.setpoint then
-        fan.on()
-    else
-        fan.off()
-    end
-
-    previousTemperature = temperature
-end
-
 function loop()
-    sensor.read(printTemperature)
+    sensor.read(
+        function(temperature)
+            print(temperature)
+
+            if temperature <= previousTemperature then
+                print("Temperature falling down")
+                fallingTime = fallingTime + 1
+                print(fallingTime)
+            else
+                print("Temperature rising up")
+                fallingTime = 0
+                print(fallingTime)
+            end
+
+            if fallingTime > thresholds.falling then
+                fan.off()
+            elseif temperature < thresholds.setpoint - hysteresis then
+                fan.on()
+            else
+                fan.off()
+            end
+
+            previousTemperature = temperature
+        end
+    )
 end
 
 engine.start = function(interval)
