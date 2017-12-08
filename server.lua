@@ -21,35 +21,27 @@ server.start = function()
     server = net.createServer(net.TCP, 30)
     
     function onReceive(socket, data)
+        buzzer.beep()
         print(data)
-    
-        ds18b20.read(
-            function(index, rom, resolution, temperature)
-                beep()
-                local message = string.format(
-                    "Index: %d Resolution: %d Temperature: %f °C",
-                    index,
-                    resolution,
-                    temperature
-                )
-                
-                print(message)
-                
-                fixedTemperature = string.format(
-                    "%.4f",
-                    temperature
-                );
-    
-                socket:send("HTTP/1.1 200 OK\n")
-                socket:send("Server: ESP8266 (nodemcu)\n")
-                socket:send(string.format(
-                    "Content-Length: %i\n\n",
-                    fixedTemperature:len())
-                )
-                socket:send(fixedTemperature)
-            end,
-            {}
+
+        print('RES HTTP/1.1 200 OK')
+        print(string.format(
+            "Temperature: %f °C",
+            previousTemperature
+        ))
+
+        fixedTemperature = string.format(
+            "%.4f",
+            previousTemperature
+        );
+
+        socket:send("HTTP/1.1 200 OK\n")
+        socket:send("Server: ESP8266 (nodemcu)\n")
+        socket:send(string.format(
+            "Content-Length: %i\n\n",
+            fixedTemperature:len())
         )
+        socket:send(fixedTemperature)
     end
     
     if server then
