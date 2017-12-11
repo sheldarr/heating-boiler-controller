@@ -12,7 +12,7 @@ if not files['data'] then
 end
 
 config.load = function()
-    print('Loading config')
+    print('Loading config...')
     data = {}
 
     if file.open('config') then
@@ -21,6 +21,7 @@ config.load = function()
         file.close()
     end
 
+    print('Config loaded...')
     return data
 end
 

@@ -15,11 +15,11 @@ function loop()
             print(temperature)
 
             if temperature <= previousTemperature then
-                print("Temperature falling down")
+                print('Temperature falling down')
                 fallingTime = fallingTime + 1
                 print(fallingTime)
             else
-                print("Temperature rising up")
+                print('Temperature rising up')
                 fallingTime = 0
                 print(fallingTime)
             end
@@ -41,9 +41,9 @@ engine.start = function(interval)
     result = tmr.create():alarm(interval, tmr.ALARM_AUTO, loop)
 
     if result then
-        print("Engine started")
+        print('Engine started')
     else
-        print("Engine error")
+        print('Engine error')
     end
 end
 

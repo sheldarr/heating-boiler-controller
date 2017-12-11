@@ -12,6 +12,7 @@ dofile('sensor.lua');
 dofile('engine.lua');
 dofile('server.lua');
 
+settings = config.load();
 engine.start(1000);
 server.start();
 
