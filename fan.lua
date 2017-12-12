@@ -1,18 +1,18 @@
-FAN_PIN = 3
+local PIN = 3
 
-gpio.mode(FAN_PIN, gpio.OUTPUT)
-gpio.mode(FAN_PIN, gpio.HIGH)
+gpio.mode(PIN, gpio.OUTPUT)
+gpio.write(PIN, gpio.HIGH)
 
 fan = {}
 
 fan.on = function()
     print("FAN ON")
-    gpio.write(FAN_PIN, gpio.LOW)
+    gpio.write(PIN, gpio.LOW)
 end
 
 fan.off = function()
     print("FAN OFF")
-    gpio.write(FAN_PIN, gpio.HIGH)
+    gpio.write(PIN, gpio.HIGH)
 end
 
 return fan

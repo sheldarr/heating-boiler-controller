@@ -1,6 +1,6 @@
-DS18B20_PIN = 5
+local PIN = 5
 
-ds18b20.setup(DS18B20_PIN)
+ds18b20.setup(PIN)
 
 sensor = {}
 
