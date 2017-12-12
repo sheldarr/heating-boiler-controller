@@ -6,12 +6,12 @@ gpio.write(PIN, gpio.HIGH)
 fan = {}
 
 fan.on = function()
-    print("FAN ON")
+    print('FAN ON')
     gpio.write(PIN, gpio.LOW)
 end
 
 fan.off = function()
-    print("FAN OFF")
+    print('FAN OFF')
     gpio.write(PIN, gpio.HIGH)
 end
 
