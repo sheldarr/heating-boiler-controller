@@ -1,13 +1,8 @@
 engine = {}
 
-hysteresis = 2
-time = 0
-previousTemperature = 0
-rising = false;
-
-thresholds = {
-    falling = 3600
-}
+local previousTemperature = 0
+local rising = false;
+local time = 0
 
 function loop()
     sensor.read(
@@ -33,7 +28,7 @@ function loop()
                     rising = true
                 end
 
-                if temperature < settings.setpoint - hysteresis then
+                if temperature < settings.setpoint - settings.hysteresis then
                     fan.on()
                 else
                     fan.off()
