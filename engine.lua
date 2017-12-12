@@ -1,6 +1,6 @@
 engine = {}
 
-local previousTemperature = 0
+previousTemperature = 0
 local rising = false;
 local time = 0
 
