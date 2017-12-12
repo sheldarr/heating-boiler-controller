@@ -1,37 +1,48 @@
 engine = {}
 
 hysteresis = 2
-fallingTime = 0
+time = 0
 previousTemperature = 0
+rising = false;
 
 thresholds = {
-    setpoint = 30.00,
     falling = 3600
 }
 
 function loop()
     sensor.read(
         function(temperature)
-            print(temperature)
+            time = time + 1
 
-            if temperature <= previousTemperature then
-                print('Temperature falling down')
-                fallingTime = fallingTime + 1
-                print(fallingTime)
-            else
-                print('Temperature rising up')
-                fallingTime = 0
-                print(fallingTime)
+            if rising then
+                if temperature < previousTemperature then
+                    time = 0
+                    rising = false
+                end
+
+                if temperature < settings.setpoint then
+                    fan.on()
+                else
+                    fan.off()
+                end
             end
 
-            if fallingTime > thresholds.falling then
-                fan.off()
-            elseif temperature < thresholds.setpoint - hysteresis then
-                fan.on()
-            else
-                fan.off()
+            if not rising then
+                if temperature > previousTemperature then
+                    time = 0
+                    rising = true
+                end
+
+                if temperature < settings.setpoint - hysteresis then
+                    fan.on()
+                else
+                    fan.off()
+                end
+
+                previousTemperature = temperature
             end
 
+            print(string.format('%.4f %s %is', temperature, rising and '↑' or '↓', time))
             previousTemperature = temperature
         end
     )
@@ -41,9 +52,9 @@ engine.start = function(interval)
     result = tmr.create():alarm(interval, tmr.ALARM_AUTO, loop)
 
     if result then
-        print('Engine started')
+        print('Engine started!')
     else
-        print('Engine error')
+        print('Engine error!')
     end
 end
 
