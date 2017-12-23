@@ -21,39 +21,81 @@ server.start = function()
     local server = net.createServer(net.TCP, 30)
     
     function onReceive(socket, data)
-        buzzer.beep()
+        buzzer.success()
         print(data)
 
         local method = string.gmatch(data, '%S+')()
 
-        print(method)
-
         if (method == 'POST') then
-            socket:send('HTTP/1.1 501 Not Implemented\n')
+            local bodyIndex = data:find('\n\r\n')
+
+            if (bodyIndex) then
+                local bodyContent = data:sub(bodyIndex)
+
+                local iterator = string.gmatch(bodyContent, '%S+')
+
+                local setpointText = iterator()
+
+                local newSettings = {}
+
+                if (setpointText) then
+                    local setpoint = tonumber(setpointText)
+
+                    print('setpoint ', setpoint)
+                    newSettings.setpoint = setpoint
+                end
+
+            
+                local hysteresisText = iterator()
+
+                if (hysteresisText) then
+                    local hysteresis = tonumber(hysteresisText)
+
+                    print('hysteresis ', hysteresis)
+                    newSettings.hysteresis = hysteresis
+                end
+
+                config.save(newSettings)
+                settings = newSettings
+
+                local message = string.format(
+                    'Setpoint: %s°C\nHysteresis: %s°C\n',
+                    settings.setpoint,
+                    settings.hysteresis
+                )
+
+                socket:send('HTTP/1.1 200 OK\n')
+                socket:send('Server: ESP8266 (nodemcu)\n')
+                socket:send(string.format(
+                    'Content-Length: %i\n\n',
+                    message:len())
+                )
+                socket:send(message)
+
+                return
+            end
+
+            socket:send('HTTP/1.1 400 Bad Request\n')
             socket:send('Server: ESP8266 (nodemcu)\n')
             socket:send('Content-Length: 0\n\n')
 
             return
         end
 
-        print('RES HTTP/1.1 200 OK')
-        print(string.format(
-            'Temperature: %f °C',
-            previousTemperature
-        ))
-
-        fixedTemperature = string.format(
-            '%.4f',
-            previousTemperature
-        );
+        local message = string.format(
+            'Temperature %s°C\nSetpoint: %s°C\nHysteresis: %s°C\n',
+            previousTemperature,
+            settings.setpoint,
+            settings.hysteresis
+        )
 
         socket:send('HTTP/1.1 200 OK\n')
         socket:send('Server: ESP8266 (nodemcu)\n')
         socket:send(string.format(
             'Content-Length: %i\n\n',
-            fixedTemperature:len())
+            message:len())
         )
-        socket:send(fixedTemperature)
+        socket:send(message)
     end
     
     if server then
