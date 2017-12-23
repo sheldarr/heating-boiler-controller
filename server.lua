@@ -59,7 +59,7 @@ server.start = function()
                 settings = newSettings
 
                 local message = string.format(
-                    'Setpoint: %s°C\nHysteresis: %s°C\n',
+                    'Setpoint: %.4f°C\nHysteresis: %.4f°C\n',
                     settings.setpoint,
                     settings.hysteresis
                 )
@@ -83,7 +83,7 @@ server.start = function()
         end
 
         local message = string.format(
-            'Temperature %s°C\nSetpoint: %s°C\nHysteresis: %s°C\n',
+            'Temperature %.4f°C\nSetpoint: %.4f°C\nHysteresis: %.4f°C\n',
             previousTemperature,
             settings.setpoint,
             settings.hysteresis
