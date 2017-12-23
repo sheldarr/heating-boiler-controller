@@ -59,13 +59,14 @@ server.start = function()
                 settings = newSettings
 
                 local message = string.format(
-                    'Setpoint: %.4f°C\nHysteresis: %.4f°C\n',
+                    '{"setpoint": %.4f, "hysteresis": %.4f}',
                     settings.setpoint,
                     settings.hysteresis
                 )
 
                 socket:send('HTTP/1.1 200 OK\n')
                 socket:send('Server: ESP8266 (nodemcu)\n')
+                socket:send('Content-Type: application/json\n')
                 socket:send(string.format(
                     'Content-Length: %i\n\n',
                     message:len())
@@ -83,7 +84,7 @@ server.start = function()
         end
 
         local message = string.format(
-            'Temperature %.4f°C\nSetpoint: %.4f°C\nHysteresis: %.4f°C\n',
+            '{"temperature": %.4f, "setpoint": %.4f, "hysteresis": %.4f}',
             previousTemperature,
             settings.setpoint,
             settings.hysteresis
@@ -91,6 +92,7 @@ server.start = function()
 
         socket:send('HTTP/1.1 200 OK\n')
         socket:send('Server: ESP8266 (nodemcu)\n')
+        socket:send('Content-Type: application/json\n')
         socket:send(string.format(
             'Content-Length: %i\n\n',
             message:len())
