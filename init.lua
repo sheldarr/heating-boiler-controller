@@ -16,6 +16,6 @@ settings = config.load();
 engine.start(1000);
 server.start();
 
-buzzer.beep();
+buzzer.success();
 
 print(wifi.sta.getip())
