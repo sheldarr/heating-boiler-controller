@@ -21,7 +21,7 @@ server.start = function()
     local server = net.createServer(net.TCP, 30)
     
     function onReceive(socket, data)
-        buzzer.success()
+        led.blink()
         print(data)
 
         local method = string.gmatch(data, '%S+')()

@@ -1,10 +1,4 @@
-DS18B20_PIN = 5
-BUZZER_PIN = 6
-BUZZER_LENGTH = 500000
-
-gpio.mode(BUZZER_PIN, gpio.OUTPUT)
-ds18b20.setup(DS18B20_PIN)
-
+dofile('led.lua');
 dofile('buzzer.lua');
 dofile('config.lua');
 dofile('fan.lua');
@@ -16,6 +10,7 @@ settings = config.load();
 engine.start(1000);
 server.start();
 
+led.blink();
 buzzer.success();
 
 print(wifi.sta.getip())
