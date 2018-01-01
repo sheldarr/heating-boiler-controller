@@ -55,13 +55,21 @@ server.start = function()
                     newSettings.hysteresis = hysteresis
                 end
 
+                local mode = iterator()
+
+                if (mode == 'NORMAL' or mode == 'FORCED_FAN_ON' or mode == 'FORCED_FAN_OFF') then
+                    print('mode ', mode)
+                    newSettings.mode = mode
+                end
+
                 config.save(newSettings)
                 settings = newSettings
 
                 local message = string.format(
-                    '{"setpoint": %.4f, "hysteresis": %.4f}',
+                    '{"setpoint": %.4f, "hysteresis": %.4f, "mode": "%s"}',
                     settings.setpoint,
-                    settings.hysteresis
+                    settings.hysteresis,
+                    settings.mode
                 )
 
                 socket:send('HTTP/1.1 200 OK\n')
@@ -84,10 +92,12 @@ server.start = function()
         end
 
         local message = string.format(
-            '{"temperature": %.4f, "setpoint": %.4f, "hysteresis": %.4f}',
+            '{"temperature": %.4f, "setpoint": %.4f, "hysteresis": %.4f, "mode": "%s", "fanOn": %s}',
             previousTemperature,
             settings.setpoint,
-            settings.hysteresis
+            settings.hysteresis,
+            settings.mode,
+            FAN_ON and 'true' or 'false'
         )
 
         socket:send('HTTP/1.1 200 OK\n')

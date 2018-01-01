@@ -9,35 +9,45 @@ function loop()
         function(temperature)
             time = time + 1
 
-            if rising then
-                if temperature < previousTemperature then
-                    time = 0
-                    rising = false
+            if(settings.mode == "NORMAL") then
+                if rising then
+                    if temperature < previousTemperature then
+                        time = 0
+                        rising = false
+                    end
+
+                    if temperature < settings.setpoint then
+                        fan.on()
+                    else
+                        fan.off()
+                    end
                 end
 
-                if temperature < settings.setpoint then
-                    fan.on()
-                else
-                    fan.off()
+                if not rising then
+                    if temperature > previousTemperature then
+                        time = 0
+                        rising = true
+                    end
+
+                    if temperature < settings.setpoint - settings.hysteresis then
+                        fan.on()
+                    else
+                        fan.off()
+                    end
+
+                    previousTemperature = temperature
                 end
             end
-
-            if not rising then
-                if temperature > previousTemperature then
-                    time = 0
-                    rising = true
-                end
-
-                if temperature < settings.setpoint - settings.hysteresis then
-                    fan.on()
-                else
-                    fan.off()
-                end
-
-                previousTemperature = temperature
+            
+            if(settings.mode == "FORCED_FAN_ON") then
+                fan.on()
             end
 
-            print(string.format('%.4f %s %is', temperature, rising and '↑' or '↓', time))
+            if(settings.mode == "FORCED_FAN_OFF") then
+                fan.off()
+            end
+
+            print(string.format('%s %s %.4f°C %s %is', settings.mode, FAN_ON and 'FAN ON' or 'FAN OFF', temperature, rising and '↑' or '↓', time))
             previousTemperature = temperature
         end
     )
