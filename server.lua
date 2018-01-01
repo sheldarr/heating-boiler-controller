@@ -92,8 +92,9 @@ server.start = function()
         end
 
         local message = string.format(
-            '{"temperature": %.4f, "setpoint": %.4f, "hysteresis": %.4f, "mode": "%s", "fanOn": %s}',
-            previousTemperature,
+            '{"outputTemperature": %.4f, "inputTemperature": %.4f, "setpoint": %.4f, "hysteresis": %.4f, "mode": "%s", "fanOn": %s}',
+            outputTemperature,
+            inputTemperature,
             settings.setpoint,
             settings.hysteresis,
             settings.mode,

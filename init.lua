@@ -7,7 +7,7 @@ dofile('engine.lua');
 dofile('server.lua');
 
 settings = config.load();
-engine.start(1000);
+engine.start(3000);
 server.start();
 
 led.blink();
