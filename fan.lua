@@ -16,10 +16,8 @@ end
 
 gpio.mode(FAN_RELAY_PIN, gpio.OUTPUT)
 gpio.write(FAN_RELAY_PIN, gpio.HIGH)
-pwm.setclock(FAN_POWER_SERVO_PIN, FAN_POWER_SERVO_CLOCK_HZ)
-pwm.setduty(FAN_POWER_SERVO_PIN, calculateFanDuty(fan.power))
---pwm.start(FAN_POWER_SERVO_PIN)/
-
+pwm.setup(FAN_POWER_SERVO_PIN, FAN_POWER_SERVO_CLOCK_HZ, calculateFanDuty(fan.power))
+pwm.start(FAN_POWER_SERVO_PIN)
 
 fan.on = function()
     fan.enabled = true
@@ -37,9 +35,6 @@ fan.setPower = function(power)
 
     fan.power = power
     pwm.setduty(FAN_POWER_SERVO_PIN, calculateFanDuty(fan.power))
-
-    print(string.format('Changed fan power to %i', fan.power))
-    print(string.format('Calculated fan power %f', calculateFanDuty(fan.power)))
 end
 
 return fan
