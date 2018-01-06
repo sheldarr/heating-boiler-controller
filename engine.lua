@@ -69,13 +69,15 @@ function loop()
     end
 
     print(string.format(
-        '%s | %s | Output %.4f°C %s %is | Input %.4f',
+        '%s | %s %s%% | Output %.4f°C %s %is | Input %.4f°C | ⎎ %s°C',
         settings.mode,
-        FAN_ON and 'FAN ON' or 'FAN OFF',
+        fan.enabled and 'FAN ON' or 'FAN OFF',
+        fan.power,
         outputTemperature,
         rising and '↑' or '↓',
         time,
-        inputTemperature
+        inputTemperature,
+        settings.hysteresis
     ))
 
     previousOutputTemperature = outputTemperature

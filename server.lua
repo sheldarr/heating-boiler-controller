@@ -98,7 +98,7 @@ server.start = function()
             settings.setpoint,
             settings.hysteresis,
             settings.mode,
-            FAN_ON and 'true' or 'false'
+            fan.enabled and 'true' or 'false'
         )
 
         socket:send('HTTP/1.1 200 OK\n')
