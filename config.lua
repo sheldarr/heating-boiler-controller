@@ -4,15 +4,6 @@ local DEFAULT_SETPOINT = 30
 local DEFAULT_HYSTERESIS = 2
 local DEFAULT_MODE = 'NORMAL'
 
-files = file.list()
-if not files['data'] then
-    print('Config file does not exist!')
-    print('Creating new config file...')
-    if file.open('data', 'w') then
-        file.close()
-    end
-end
-
 config.load = function()
     print('Loading config...')
 
@@ -60,6 +51,16 @@ config.save = function(settings)
             settings.mode
         )
     )
+end
+
+files = file.list()
+if not files['data'] then
+    print('Config file does not exist!')
+    print('Creating new config file...')
+    if file.open('data', 'w') then
+        file.close()
+    end
+    config.save()
 end
 
 return config
