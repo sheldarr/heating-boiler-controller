@@ -1,12 +1,13 @@
+dofile('config.lua');
+settings = config.load();
+
 dofile('led.lua');
 dofile('buzzer.lua');
-dofile('config.lua');
 dofile('fan.lua');
 dofile('sensor.lua');
 dofile('engine.lua');
 dofile('server.lua');
 
-settings = config.load();
 engine.start(3000);
 server.start();
 
