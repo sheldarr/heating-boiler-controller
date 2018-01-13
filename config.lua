@@ -2,6 +2,7 @@ config = {}
 
 local DEFAULT_SETPOINT = 30
 local DEFAULT_HYSTERESIS = 2
+local DEFAULT_POWER = 50
 local DEFAULT_MODE = 'NORMAL'
 
 config.load = function()
@@ -17,13 +18,16 @@ config.load = function()
 
     settings.setpoint = settings.setpoint or DEFAULT_SETPOINT
     settings.hysteresis = settings.hysteresis or DEFAULT_HYSTERESIS
+    settings.power = settings.power or DEFAULT_POWER
     settings.mode = settings.mode or DEFAULT_MODE
 
     print(
         string.format(
-            'Config loaded...\nSetpoint: %s\nHysteresis: %s',
+            'Config loaded...\nSetpoint: %s\nHysteresis: %s\n Power: %s\n Mode: %s',
             settings.setpoint,
-            settings.hysteresis
+            settings.hysteresis,
+            settings.power,
+            settings.mode
         )
     )
     
@@ -36,6 +40,7 @@ config.save = function(settings)
     settings = settings or {}
     settings.setpoint = settings.setpoint or DEFAULT_SETPOINT
     settings.hysteresis = settings.hysteresis or DEFAULT_HYSTERESIS
+    settings.power = settings.power or DEFAULT_POWER
     settings.mode = settings.mode or DEFAULT_MODE
 
     if file.open('data', 'w+') then
@@ -45,9 +50,10 @@ config.save = function(settings)
 
     print(
         string.format(
-            'Config writed...\nSetpoint: %s\nHysteresis: %s',
+            'Config writed...\nSetpoint: %s\nHysteresis: %s\n Power: %s\n Mode: %s',
             settings.setpoint,
             settings.hysteresis,
+            settings.power,
             settings.mode
         )
     )
