@@ -55,6 +55,15 @@ server.start = function()
                     newSettings.hysteresis = hysteresis
                 end
 
+                local powerText = iterator()
+
+                if (powerText) then
+                    local power = tonumber(powerText)
+
+                    print('power ', power)
+                    newSettings.power = power
+                end
+
                 local mode = iterator()
 
                 if (mode == 'NORMAL' or mode == 'FORCED_FAN_ON' or mode == 'FORCED_FAN_OFF') then
@@ -66,9 +75,10 @@ server.start = function()
                 settings = newSettings
 
                 local message = string.format(
-                    '{"setpoint": %.4f, "hysteresis": %.4f, "mode": "%s"}',
+                    '{"setpoint": %.4f, "hysteresis": %.4f, "power": %s, "mode": "%s"}',
                     settings.setpoint,
                     settings.hysteresis,
+                    settings.power,
                     settings.mode
                 )
 
@@ -92,11 +102,12 @@ server.start = function()
         end
 
         local message = string.format(
-            '{"outputTemperature": %.4f, "inputTemperature": %.4f, "setpoint": %.4f, "hysteresis": %.4f, "mode": "%s", "fanOn": %s}',
+            '{"outputTemperature": %.4f, "inputTemperature": %.4f, "setpoint": %.4f, "hysteresis": %.4f, "power": %.2f, "mode": "%s", "fanOn": %s}',
             outputTemperature,
             inputTemperature,
             settings.setpoint,
             settings.hysteresis,
+            settings.power,
             settings.mode,
             fan.enabled and 'true' or 'false'
         )
