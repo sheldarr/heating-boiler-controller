@@ -30,8 +30,6 @@ function loop()
 
     time = time + 1
 
-    fan.setPower(settings.power)
-
     if (settings.mode == "NORMAL") then
         if rising then
             if outputTemperature < previousOutputTemperature then
@@ -71,10 +69,9 @@ function loop()
     end
 
     print(string.format(
-        '%s | %s %s%% | Output %.4f°C %s %is | Input %.4f°C | ⎎ %s°C',
+        '%s | %s | Output %.4f°C %s %is | Input %.4f°C | ⎎ %s°C',
         settings.mode,
         fan.enabled and 'FAN ON' or 'FAN OFF',
-        settings.power,
         outputTemperature,
         rising and '↑' or '↓',
         time,
