@@ -3,7 +3,7 @@ local LENGTH = 500000
 
 gpio.mode(PIN, gpio.OUTPUT)
 
-led = {}
+local led = {}
 
 led.blink = function(length)
     length = length or LENGTH
