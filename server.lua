@@ -1,25 +1,27 @@
-server = {}
+local config = require('config');
+local fan = require('fan');
+
+local settings = config.load();
+
+local server = {}
 
 server.start = function()
     wifi.setmode(wifi.STATION)
-    
+
     local ipConfig = {
-        ip = '192.168.0.164',
+        ip = '192.168.1.4',
         netmask = '255.255.255.0',
-        gateway = '192.168.0.1'
+        gateway = '192.168.1.1'
     }
-    
+
     wifi.sta.setip(ipConfig)
-    
-    local stationConfig = {
-        ssid = '',
-        pwd = ''
-    }
-    
+
+    local stationConfig = {ssid = 'Arkham', pwd = '87654321'}
+
     wifi.sta.config(stationConfig)
-    
+
     local server = net.createServer(net.TCP, 30)
-    
+
     function onReceive(socket, data)
         led.blink()
         print(data)
@@ -45,7 +47,6 @@ server.start = function()
                     newSettings.setpoint = setpoint
                 end
 
-            
                 local hysteresisText = iterator()
 
                 if (hysteresisText) then
@@ -57,7 +58,8 @@ server.start = function()
 
                 local mode = iterator()
 
-                if (mode == 'NORMAL' or mode == 'FORCED_FAN_ON' or mode == 'FORCED_FAN_OFF') then
+                if (mode == 'NORMAL' or mode == 'FORCED_FAN_ON' or mode ==
+                    'FORCED_FAN_OFF') then
                     print('mode ', mode)
                     newSettings.mode = mode
                 end
@@ -66,19 +68,15 @@ server.start = function()
                 settings = newSettings
 
                 local message = string.format(
-                    '{"setpoint": %.4f, "hysteresis": %.4f, "mode": "%s"}',
-                    settings.setpoint,
-                    settings.hysteresis,
-                    settings.mode
-                )
+                                    '{"setpoint": %.4f, "hysteresis": %.4f, "mode": "%s"}',
+                                    settings.setpoint, settings.hysteresis,
+                                    settings.mode)
 
                 socket:send('HTTP/1.1 200 OK\n')
                 socket:send('Server: ESP8266 (nodemcu)\n')
                 socket:send('Content-Type: application/json\n')
-                socket:send(string.format(
-                    'Content-Length: %i\n\n',
-                    message:len())
-                )
+                socket:send(string.format('Content-Length: %i\n\n',
+                                          message:len()))
                 socket:send(message)
 
                 return
@@ -92,25 +90,18 @@ server.start = function()
         end
 
         local message = string.format(
-            '{"outputTemperature": %.4f, "inputTemperature": %.4f, "setpoint": %.4f, "hysteresis": %.4f, "mode": "%s", "fanOn": %s}',
-            outputTemperature,
-            inputTemperature,
-            settings.setpoint,
-            settings.hysteresis,
-            settings.mode,
-            fan.enabled and 'true' or 'false'
-        )
+                            '{"outputTemperature": %.4f, "inputTemperature": %.4f, "setpoint": %.4f, "hysteresis": %.4f, "mode": "%s", "fanOn": %s}',
+                            outputTemperature, inputTemperature,
+                            settings.setpoint, settings.hysteresis,
+                            settings.mode, fan.enabled and 'true' or 'false')
 
         socket:send('HTTP/1.1 200 OK\n')
         socket:send('Server: ESP8266 (nodemcu)\n')
         socket:send('Content-Type: application/json\n')
-        socket:send(string.format(
-            'Content-Length: %i\n\n',
-            message:len())
-        )
+        socket:send(string.format('Content-Length: %i\n\n', message:len()))
         socket:send(message)
     end
-    
+
     if server then
         server:listen(80, function(socket)
             socket:on('receive', onReceive)
