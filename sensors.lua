@@ -1,7 +1,7 @@
 local t = require("ds18b20")
 local SENSORS_PIN = 5
 
-local OUTPUT_TEMP_SENSOR_ADDRESS = "28:D1:C4:77:0B:00:00:3F"
+local OUTPUT_TEMP_SENSOR_ADDRESS = "28:30:BD:83:0B:00:00:C0"
 local INPUT_TEMP_SENSOR_ADDRESS = "28:D1:C4:77:0B:00:00:3F"
 
 local sensors = {}
@@ -21,6 +21,8 @@ sensors.read = function(callback)
             if (address == INPUT_TEMP_SENSOR_ADDRESS) then
                 measurement.input = temp
             end
+
+            print(string.format('%s %.4f°C', address, temp))
         end
 
         callback(measurement)
