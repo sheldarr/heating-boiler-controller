@@ -1,6 +1,6 @@
 local FAN_RELAY_PIN = 3
 
-fan = {}
+local fan = {}
 
 fan.enabled = false
 
