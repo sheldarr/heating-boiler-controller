@@ -1,17 +1,11 @@
-dofile('config.lua');
-settings = config.load();
+local led = require('led');
 
-dofile('led.lua');
-dofile('buzzer.lua');
-dofile('fan.lua');
-dofile('sensor.lua');
-dofile('engine.lua');
-dofile('server.lua');
+local engine = require('engine');
+local server = require('server');
 
-engine.start(3000);
+engine.start(5000);
 server.start();
 
 led.blink();
-buzzer.success();
 
 print(wifi.sta.getip())
