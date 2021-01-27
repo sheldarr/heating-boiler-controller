@@ -4,10 +4,11 @@ local sensors = require('sensors');
 
 local engine = {}
 
-outputTemperature = 0
-previousOutputTemperature = 0
 inputTemperature = 0
-previousInputTemperature = 0
+outputTemperature = 0
+
+local previousInputTemperature = 0
+local previousOutputTemperature = 0
 local rising = false;
 local time = 0
 
@@ -59,10 +60,11 @@ function loop()
     if (settings.mode == "FORCED_FAN_OFF") then fan.off() end
 
     print(string.format(
-              '%s | %s | Output %.4f°C %s %is | Input %.4f°C | ⎎ %s°C | %s',
+              '%s | %s | Output %.4f°C %s %is | Input %.4f°C | ⎎ %s°C | ◉ %s | H %s',
               settings.mode, fan.enabled and 'FAN ON' or 'FAN OFF',
               outputTemperature, rising and '↑' or '↓', time,
-              inputTemperature, settings.hysteresis, settings.setpoint))
+              inputTemperature, settings.hysteresis, settings.setpoint,
+              node.heap()))
 
     previousOutputTemperature = outputTemperature
     previousInputTemperature = inputTemperature
