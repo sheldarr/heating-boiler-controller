@@ -1,4 +1,8 @@
-engine = {}
+local config = require('config');
+local fan = require('fan');
+local sensors = require('sensors');
+
+local engine = {}
 
 outputTemperature = 0
 previousOutputTemperature = 0
@@ -6,27 +10,17 @@ inputTemperature = 0
 previousInputTemperature = 0
 local rising = false;
 local time = 0
-local lastSensor = 'input'
 
 function loop()
-    if (lastSensor == 'input') then
-        sensor.readOutputTemperature(
-            function(temperature)
-                previousOutputTemperature = outputTemperature
-                outputTemperature = temperature
-                lastSensor = 'output'
-            end
-        )
-    end
-    if (lastSensor == 'output') then
-        sensor.readInputTemperature(
-            function(temperature)
-                previousInputTemperature = inputTemperature
-                inputTemperature = temperature
-                lastSensor = 'input'
-            end
-        )
-    end
+    local settings = config.load();
+
+    sensors.read(function(measurement)
+        previousOutputTemperature = outputTemperature
+        outputTemperature = measurement.output
+
+        previousInputTemperature = inputTemperature
+        inputTemperature = measurement.input
+    end)
 
     time = time + 1
 
@@ -59,38 +53,23 @@ function loop()
             previousOutputTemperature = outputTemperature
         end
     end
-    
-    if(settings.mode == "FORCED_FAN_ON") then
-        fan.on()
-    end
 
-    if(settings.mode == "FORCED_FAN_OFF") then
-        fan.off()
-    end
+    if (settings.mode == "FORCED_FAN_ON") then fan.on() end
+
+    if (settings.mode == "FORCED_FAN_OFF") then fan.off() end
 
     print(string.format(
-        '%s | %s | Output %.4f°C %s %is | Input %.4f°C | ⎎ %s°C',
-        settings.mode,
-        fan.enabled and 'FAN ON' or 'FAN OFF',
-        outputTemperature,
-        rising and '↑' or '↓',
-        time,
-        inputTemperature,
-        settings.hysteresis
-    ))
+              '%s | %s | Output %.4f°C %s %is | Input %.4f°C | ⎎ %s°C | %s',
+              settings.mode, fan.enabled and 'FAN ON' or 'FAN OFF',
+              outputTemperature, rising and '↑' or '↓', time,
+              inputTemperature, settings.hysteresis, settings.setpoint))
 
     previousOutputTemperature = outputTemperature
     previousInputTemperature = inputTemperature
 end
 
 engine.start = function(interval)
-    result = tmr.create():alarm(interval, tmr.ALARM_AUTO, loop)
-
-    if result then
-        print('Engine started!')
-    else
-        print('Engine error!')
-    end
+    tmr.create():alarm(interval, tmr.ALARM_AUTO, loop)
 end
 
 return engine
