@@ -1,7 +1,6 @@
 local config = require('config');
 local fan = require('fan');
-
-local settings = config.load();
+local led = require('led');
 
 local server = {}
 
@@ -16,7 +15,7 @@ server.start = function()
 
     wifi.sta.setip(ipConfig)
 
-    local stationConfig = {ssid = 'Arkham', pwd = '87654321'}
+    local stationConfig = {ssid = '', pwd = ''}
 
     wifi.sta.config(stationConfig)
 
@@ -65,12 +64,11 @@ server.start = function()
                 end
 
                 config.save(newSettings)
-                settings = newSettings
 
                 local message = string.format(
                                     '{"setpoint": %.4f, "hysteresis": %.4f, "mode": "%s"}',
-                                    settings.setpoint, settings.hysteresis,
-                                    settings.mode)
+                                    newSettings.setpoint,
+                                    newSettings.hysteresis, newSettings.mode)
 
                 socket:send('HTTP/1.1 200 OK\n')
                 socket:send('Server: ESP8266 (nodemcu)\n')
@@ -89,11 +87,14 @@ server.start = function()
             return
         end
 
+        local settings = config.load();
+
         local message = string.format(
-                            '{"outputTemperature": %.4f, "inputTemperature": %.4f, "setpoint": %.4f, "hysteresis": %.4f, "mode": "%s", "fanOn": %s}',
+                            '{"outputTemperature": %.4f, "inputTemperature": %.4f, "setpoint": %.4f, "hysteresis": %.4f, "mode": "%s", "fanOn": %s, "heap": %d}',
                             outputTemperature, inputTemperature,
                             settings.setpoint, settings.hysteresis,
-                            settings.mode, fan.enabled and 'true' or 'false')
+                            settings.mode, fan.enabled and 'true' or 'false',
+                            node.heap())
 
         socket:send('HTTP/1.1 200 OK\n')
         socket:send('Server: ESP8266 (nodemcu)\n')
