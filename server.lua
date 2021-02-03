@@ -1,14 +1,12 @@
-local config = require('config');
 local fan = require('fan');
 local led = require('led');
+local state = require('state');
 
-local server = {}
-
-server.start = function()
+local startServer = function()
     wifi.setmode(wifi.STATION)
 
     local ipConfig = {
-        ip = '192.168.1.4',
+        ip = '192.168.1.7',
         netmask = '255.255.255.0',
         gateway = '192.168.1.1'
     }
@@ -37,13 +35,12 @@ server.start = function()
 
                 local setpointText = iterator()
 
-                local newSettings = {}
+                local newState = {}
 
                 if (setpointText) then
                     local setpoint = tonumber(setpointText)
 
-                    print('setpoint ', setpoint)
-                    newSettings.setpoint = setpoint
+                    newState.setpoint = setpoint
                 end
 
                 local hysteresisText = iterator()
@@ -51,24 +48,20 @@ server.start = function()
                 if (hysteresisText) then
                     local hysteresis = tonumber(hysteresisText)
 
-                    print('hysteresis ', hysteresis)
-                    newSettings.hysteresis = hysteresis
+                    newState.hysteresis = hysteresis
                 end
 
                 local mode = iterator()
 
                 if (mode == 'NORMAL' or mode == 'FORCED_FAN_ON' or mode ==
-                    'FORCED_FAN_OFF') then
-                    print('mode ', mode)
-                    newSettings.mode = mode
-                end
+                    'FORCED_FAN_OFF') then newState.mode = mode end
 
-                config.save(newSettings)
+                state.setState(newState);
 
                 local message = string.format(
                                     '{"setpoint": %.4f, "hysteresis": %.4f, "mode": "%s"}',
-                                    newSettings.setpoint,
-                                    newSettings.hysteresis, newSettings.mode)
+                                    newState.setpoint, newState.hysteresis,
+                                    newState.mode)
 
                 socket:send('HTTP/1.1 200 OK\n')
                 socket:send('Server: ESP8266 (nodemcu)\n')
@@ -87,14 +80,14 @@ server.start = function()
             return
         end
 
-        local settings = config.load();
+        local freshState = state.getState()
 
         local message = string.format(
                             '{"outputTemperature": %.4f, "inputTemperature": %.4f, "setpoint": %.4f, "hysteresis": %.4f, "mode": "%s", "fanOn": %s, "heap": %d}',
-                            outputTemperature, inputTemperature,
-                            settings.setpoint, settings.hysteresis,
-                            settings.mode, fan.enabled and 'true' or 'false',
-                            node.heap())
+                            freshState.outputTemperature,
+                            freshState.inputTemperature, freshState.setpoint,
+                            freshState.hysteresis, freshState.mode,
+                            fan.enabled and 'true' or 'false', node.heap())
 
         socket:send('HTTP/1.1 200 OK\n')
         socket:send('Server: ESP8266 (nodemcu)\n')
@@ -110,4 +103,6 @@ server.start = function()
     end
 end
 
-return server
+startServer()
+
+print(wifi.sta.getip())
