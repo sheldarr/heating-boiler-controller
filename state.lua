@@ -1,7 +1,28 @@
 local state = {}
 
+local DEFAULT_MODE = 'NORMAL'
+local DEFAULT_HYSTERESIS = 0.5
+local ERROR_SETPOINT = -1
+local NO_MEASUREMENT = 0
+
 local getState = function()
     local freshState = {}
+
+    local files = file.list()
+
+    if not files['state'] then
+        print('Creating new config file...')
+
+        if file.open('state', 'w+') then
+            file.writeline(DEFAULT_MODE)
+            file.writeline(DEFAULT_HYSTERESIS)
+            file.writeline(ERROR_SETPOINT)
+            file.writeline(NO_MEASUREMENT)
+            file.writeline(NO_MEASUREMENT)
+
+            file.close()
+        end
+    end
 
     if file.open('state') then
         freshState.mode = file.readline():gsub("%s+", "")
