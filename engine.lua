@@ -45,11 +45,7 @@ function loop()
             end
 
             if state.outputTemperature < state.setpoint then
-                if time < NO_FUEL_TIME_LIMIT then
-                    fan.on()
-                else
-                    fan.off()
-                end
+                fan.on()
             else
                 fan.off()
             end
@@ -62,7 +58,11 @@ function loop()
             end
 
             if state.outputTemperature < state.setpoint - state.hysteresis then
-                fan.on()
+                if time < NO_FUEL_TIME_LIMIT then
+                    fan.on()
+                else
+                    fan.off()
+                end
             else
                 fan.off()
             end
