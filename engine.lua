@@ -8,6 +8,11 @@ local previousOutputTemperature = 0
 local rising = false;
 local time = 0
 
+local SECOND = 1000
+local INTERVAL = 5 * SECOND
+
+local NO_FUEL_TIME_LIMIT = 360
+
 local readTemperaturesTimer = tmr.create()
 
 readTemperaturesTimer:register(5000, tmr.ALARM_SEMI, function()
@@ -40,7 +45,11 @@ function loop()
             end
 
             if state.outputTemperature < state.setpoint then
-                fan.on()
+                if time < NO_FUEL_TIME_LIMIT then
+                    fan.on()
+                else
+                    fan.off()
+                end
             else
                 fan.off()
             end
@@ -72,4 +81,4 @@ function loop()
               node.heap()))
 end
 
-tmr.create():alarm(5000, tmr.ALARM_AUTO, loop)
+tmr.create():alarm(INTERVAL, tmr.ALARM_AUTO, loop)
