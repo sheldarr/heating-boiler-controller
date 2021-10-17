@@ -105,4 +105,13 @@ end
 
 startServer()
 
-print(wifi.sta.getip())
+local printWifiStatus = function()
+    local ssid, password = wifi.sta.getconfig()
+    local ip, mask, gateway = wifi.sta.getip()
+    local status = wifi.sta.status()
+
+    print(string.format('%s | %s | %s | %s | %s | %s', ssid, password, ip, mask,
+                        gateway, status))
+end
+
+tmr.create():alarm(5000, tmr.ALARM_AUTO, printWifiStatus)
