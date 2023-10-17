@@ -11,8 +11,6 @@ local time = 0
 local SECOND = 1000
 local INTERVAL = 5 * SECOND
 
-local NO_FUEL_TIME_LIMIT = 360
-
 local readTemperaturesTimer = tmr.create()
 
 readTemperaturesTimer:register(5000, tmr.ALARM_SEMI, function()
@@ -58,11 +56,7 @@ function loop()
             end
 
             if state.outputTemperature < state.setpoint - state.hysteresis then
-                if time < NO_FUEL_TIME_LIMIT then
-                    fan.on()
-                else
-                    fan.off()
-                end
+                fan.on()
             else
                 fan.off()
             end
